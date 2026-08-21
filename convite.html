@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  PAGINA DE ABERTURA DO EZER.APP (convite de grupo) — GitHub Pages
+  ============================================================
+  Mesma ideia de docs/abrir.html (ver comentario la pra instrucoes
+  completas de publicacao) — sem NENHUM texto solto no HTML bruto, tudo
+  inserido via JS depois do carregamento, pra nao bagunçar a previa que
+  o WhatsApp gera a partir do link.
+
+  Abre ezer-app://entrar-grupo/{codigo} — rota mapeada em App.js
+  (linking.config.screens.Grupos) pra tela Grupos, que abre o modal
+  "Entrar em um Grupo" com o codigo ja preenchido.
+  ============================================================
+-->
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ezer.app</title>
+<style>
+  body { margin: 0; background: #F7F3E8; display: flex; align-items: center; justify-content: center; min-height: 100vh; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+  #spinner { width: 36px; height: 36px; border: 3px solid #EDE7D9; border-top-color: #C8955A; border-radius: 50%; animation: girar 0.8s linear infinite; }
+  @keyframes girar { to { transform: rotate(360deg); } }
+  #msg { color: #4A5568; font-size: 15px; line-height: 22px; text-align: center; padding: 0 24px; display: none; }
+  #botaoLoja { display: none; background-color: #1A3A5C; color: #F7F3E8; text-decoration: none; font-weight: 700; font-size: 15px; padding: 14px 28px; border-radius: 12px; margin-top: 16px; }
+</style>
+</head>
+<body>
+<div id="spinner"></div>
+<div id="msg"></div>
+<a id="botaoLoja" href="#"></a>
+<script>
+(function () {
+  // Cole aqui o link da Play Store assim que o app for publicado.
+  var PLAY_STORE_URL = '';
+
+  var params = new URLSearchParams(window.location.search);
+  var codigo = params.get('codigo');
+
+  var spinner = document.getElementById('spinner');
+  var msg = document.getElementById('msg');
+  var botao = document.getElementById('botaoLoja');
+
+  function mostrarFallback() {
+    spinner.style.display = 'none';
+    if (PLAY_STORE_URL) {
+      botao.href = PLAY_STORE_URL;
+      botao.textContent = 'Baixar o Ezer.app';
+      botao.style.display = 'inline-block';
+      msg.textContent = 'Não conseguimos abrir o aplicativo automaticamente. Depois de instalar, use o código do convite dentro do app, em Grupos.';
+    } else {
+      msg.textContent = 'O Ezer.app ainda não está disponível na Play Store — em breve! 🙏';
+    }
+    msg.style.display = 'block';
+  }
+
+  if (codigo) {
+    var deepLink = 'ezer-app://entrar-grupo/' + encodeURIComponent(codigo);
+    var saiuDaPagina = false;
+
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) saiuDaPagina = true;
+    });
+
+    window.location.href = deepLink;
+
+    setTimeout(function () {
+      if (!saiuDaPagina) mostrarFallback();
+    }, 1800);
+  } else {
+    mostrarFallback();
+  }
+})();
+</script>
+</body>
+</html>

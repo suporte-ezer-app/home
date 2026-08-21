@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  PAGINA DE ABERTURA DO EZER.APP (devocional) — GitHub Pages
+  ============================================================
+  Substitui a antiga pagina do Blogger (blogger-abrir-app.html), que
+  bloqueava o rastreador do WhatsApp (erro 403) e enchia a previa da
+  mensagem com uma caixa feia/inconsistente.
+
+  DE PROPOSITO, nao existe NENHUM texto solto no HTML abaixo (nada tipo
+  "Abrindo no aplicativo..." escrito direto no markup) — todo texto e
+  inserido via JavaScript, DEPOIS que a pagina carrega. Como o WhatsApp
+  gera a previa a partir do HTML bruto (sem rodar JS), ele nao encontra
+  nada pra mostrar, e o link aparece como texto azul simples, clicavel,
+  sem caixa de previa por baixo. Quem realmente abre a pagina no
+  navegador (pessoa de verdade) ve o spinner e a mensagem normalmente,
+  porque o JS roda e preenche tudo.
+
+  COMO PUBLICAR (Gabriel):
+  1. Repositorio ja definido: https://github.com/suporte-ezer-app/home
+  2. Ative GitHub Pages nele: Settings -> Pages -> Branch: main, pasta /docs.
+  3. Suba esta pasta docs/ (com abrir.html e convite.html) pro repositorio.
+  4. A URL final ja bate com o que esta em src/utils/links.js
+     (GITHUB_PAGES_BASE = https://suporte-ezer-app.github.io/home).
+  5. Teste no celular:
+     https://suporte-ezer-app.github.io/home/abrir.html?serieId=teste&dia=1
+  6. Quando o app for publicado na Play Store, cole o link dentro das
+     aspas de PLAY_STORE_URL, logo abaixo, e publique de novo.
+  ============================================================
+-->
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ezer.app</title>
+<style>
+  body { margin: 0; background: #F7F3E8; display: flex; align-items: center; justify-content: center; min-height: 100vh; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+  #spinner { width: 36px; height: 36px; border: 3px solid #EDE7D9; border-top-color: #C8955A; border-radius: 50%; animation: girar 0.8s linear infinite; }
+  @keyframes girar { to { transform: rotate(360deg); } }
+  #msg { color: #4A5568; font-size: 15px; line-height: 22px; text-align: center; padding: 0 24px; display: none; }
+  #botaoLoja { display: none; background-color: #1A3A5C; color: #F7F3E8; text-decoration: none; font-weight: 700; font-size: 15px; padding: 14px 28px; border-radius: 12px; margin-top: 16px; }
+</style>
+</head>
+<body>
+<div id="spinner"></div>
+<div id="msg"></div>
+<a id="botaoLoja" href="#"></a>
+<script>
+(function () {
+  // Cole aqui o link da Play Store assim que o app for publicado. Ate la,
+  // deixe vazio — a pagina mostra "em breve" no fallback.
+  var PLAY_STORE_URL = '';
+
+  var params = new URLSearchParams(window.location.search);
+  var serieId = params.get('serieId');
+  var dia = params.get('dia');
+
+  var spinner = document.getElementById('spinner');
+  var msg = document.getElementById('msg');
+  var botao = document.getElementById('botaoLoja');
+
+  function mostrarFallback() {
+    spinner.style.display = 'none';
+    if (PLAY_STORE_URL) {
+      botao.href = PLAY_STORE_URL;
+      botao.textContent = 'Baixar o Ezer.app';
+      botao.style.display = 'inline-block';
+      msg.textContent = 'Não conseguimos abrir o aplicativo automaticamente.';
+    } else {
+      msg.textContent = 'O Ezer.app ainda não está disponível na Play Store — em breve! 🙏';
+    }
+    msg.style.display = 'block';
+  }
+
+  if (serieId && dia) {
+    var deepLink = 'ezer-app://devocional/' + encodeURIComponent(serieId) + '/' + encodeURIComponent(dia);
+    var saiuDaPagina = false;
+
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) saiuDaPagina = true;
+    });
+
+    window.location.href = deepLink;
+
+    setTimeout(function () {
+      if (!saiuDaPagina) mostrarFallback();
+    }, 1800);
+  } else {
+    mostrarFallback();
+  }
+})();
+</script>
+</body>
+</html>
