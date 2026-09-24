@@ -1,70 +1,76 @@
 <!DOCTYPE html>
+<!--
+  ============================================================
+  PAGINA DE ABERTURA DO EZER.APP (convite de dupla) — GitHub Pages
+  ============================================================
+  Mesma ideia de docs/abrir.html (ver comentario la pra instrucoes
+  completas de publicacao) — sem NENHUM texto solto no HTML bruto, tudo
+  inserido via JS depois do carregamento, pra nao baguncar a previa que
+  o WhatsApp gera a partir do link.
+
+  Abre ezer-app://entrar-dupla/{codigo} — rota mapeada em App.js
+  (linking.config.screens.Dupla) pra tela DuplaScreen, que abre o modal
+  "Tenho um codigo" com o codigo ja preenchido.
+  ============================================================
+-->
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Convite para Dupla — Ezer.app</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: #F5F0E8;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      text-align: center;
-      padding: 24px;
-      box-sizing: border-box;
-    }
-    .card {
-      background: #fff;
-      border-radius: 20px;
-      padding: 40px 32px;
-      max-width: 360px;
-      width: 100%;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
-    }
-    .logo { font-size: 48px; margin-bottom: 8px; }
-    h1 { color: #1A2D4F; font-size: 22px; margin: 0 0 8px; }
-    p  { color: #6B7280; font-size: 15px; line-height: 1.6; margin: 0 0 28px; }
-    .btn {
-      display: inline-block;
-      background: #C8860A;
-      color: #fff;
-      text-decoration: none;
-      padding: 16px 32px;
-      border-radius: 12px;
-      font-size: 16px;
-      font-weight: 700;
-    }
-    .store { margin-top: 20px; font-size: 13px; color: #9CA3AF; }
-    .store a { color: #1A2D4F; font-weight: 600; text-decoration: none; }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ezer.app</title>
+<style>
+  body { margin: 0; background: #F7F3E8; display: flex; align-items: center; justify-content: center; min-height: 100vh; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+  #spinner { width: 36px; height: 36px; border: 3px solid #EDE7D9; border-top-color: #C8955A; border-radius: 50%; animation: girar 0.8s linear infinite; }
+  @keyframes girar { to { transform: rotate(360deg); } }
+  #msg { color: #4A5568; font-size: 15px; line-height: 22px; text-align: center; padding: 0 24px; display: none; }
+  #botaoLoja { display: none; background-color: #1A3A5C; color: #F7F3E8; text-decoration: none; font-weight: 700; font-size: 15px; padding: 14px 28px; border-radius: 12px; margin-top: 16px; }
+</style>
 </head>
 <body>
-  <div class="card">
-    <div class="logo">🔥</div>
-    <h1>Você foi convidado para uma dupla</h1>
-    <p>Caminhem juntos em devocionais e propósitos pelo Ezer.app.</p>
-    <a class="btn" id="btn-abrir">Abrir no Ezer.app</a>
-    <p class="store">
-      Não tem o app?
-      <a href="https://play.google.com/store/apps/details?id=com.ezer.app">Baixe na Play Store</a>
-    </p>
-  </div>
+<div id="spinner"></div>
+<div id="msg"></div>
+<a id="botaoLoja" href="#"></a>
+<script>
+(function () {
+  var PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=com.ezer.app';
 
-  <script>
-    const params = new URLSearchParams(window.location.search);
-    const codigo = params.get('codigo') || '';
-    const deepLink = 'ezer-app://entrar-dupla/' + encodeURIComponent(codigo);
+  var params = new URLSearchParams(window.location.search);
+  var codigo = params.get('codigo');
 
-    document.getElementById('btn-abrir').href = deepLink;
+  var spinner = document.getElementById('spinner');
+  var msg = document.getElementById('msg');
+  var botao = document.getElementById('botaoLoja');
 
-    // Tenta abrir o app automaticamente após 300ms.
-    // Se o app não estiver instalado, o setTimeout expira sem efeito
-    // e a pessoa vê o botão da Play Store normalmente.
-    setTimeout(() => { window.location.href = deepLink; }, 300);
-  </script>
+  function mostrarFallback() {
+    spinner.style.display = 'none';
+    if (PLAY_STORE_URL) {
+      botao.href = PLAY_STORE_URL;
+      botao.textContent = 'Baixar o Ezer.app';
+      botao.style.display = 'inline-block';
+      msg.textContent = 'Não conseguimos abrir o aplicativo automaticamente. Depois de instalar, use o código do convite dentro do app, em Dupla.';
+    } else {
+      msg.textContent = 'O Ezer.app ainda não está disponível na Play Store — em breve! 🙏';
+    }
+    msg.style.display = 'block';
+  }
+
+  if (codigo) {
+    var deepLink = 'ezer-app://entrar-dupla/' + encodeURIComponent(codigo);
+    var saiuDaPagina = false;
+
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) saiuDaPagina = true;
+    });
+
+    window.location.href = deepLink;
+
+    setTimeout(function () {
+      if (!saiuDaPagina) mostrarFallback();
+    }, 1800);
+  } else {
+    mostrarFallback();
+  }
+})();
+</script>
 </body>
 </html>
