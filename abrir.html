@@ -72,8 +72,11 @@
     msg.style.display = 'block';
   }
 
-  if (serieId && dia) {
-    var deepLink = 'ezer-app://devocional/' + encodeURIComponent(serieId) + '/' + encodeURIComponent(dia);
+  if (serieId) {
+    // Com "dia" abre a devocional; sem "dia" abre a serie inteira.
+    var deepLink = dia
+      ? 'ezer-app://devocional/' + encodeURIComponent(serieId) + '/' + encodeURIComponent(dia)
+      : 'ezer-app://serie/' + encodeURIComponent(serieId);
     var saiuDaPagina = false;
 
     document.addEventListener('visibilitychange', function () {
