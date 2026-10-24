@@ -8,7 +8,7 @@
   que o WhatsApp gera a partir do link).
 
   Abre ezer-app://entrar-leitura/{codigo} — rota mapeada em App.js
-  (linking.config.screens.Home). A Home troca para a aba "Leitura Biblica"
+  (linking.config.screens.Home). A Home troca para a aba "Plano Biblico"
   e abre o pop-up "Entrar em um grupo" com o codigo ja preenchido.
 
   Publicar: suba este arquivo para a pasta docs/ do repositorio
@@ -50,7 +50,7 @@
       botao.href = PLAY_STORE_URL;
       botao.textContent = 'Baixar o Ezer.app';
       botao.style.display = 'inline-block';
-      msg.textContent = 'Não conseguimos abrir o aplicativo automaticamente. Depois de instalar, use o código do convite em Leitura Bíblica > Ler em grupo > Entrar com um código' + (codigo ? ': ' + codigo : '.');
+      msg.textContent = 'Não conseguimos abrir o aplicativo automaticamente. Depois de instalar, use o código do convite em Plano Bíblico > Ler em grupo > Entrar com um código' + (codigo ? ': ' + codigo : '.');
     } else {
       msg.textContent = 'O Ezer.app ainda não está disponível na Play Store — em breve! 🙏';
     }
